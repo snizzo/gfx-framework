@@ -78,7 +78,7 @@ class EMain {
 		//standard global objects
 		$GLOBALS['main'] = $this;
 		$this->dbg = true;
-		$this->log = new ELog(1); //plain text, don't preserve as default
+		$this->log = new ELog(0); //plain text, don't preserve as default
 		$this->db = new EDatabase(); //config in config.php TODO:fix
 		
 	}
