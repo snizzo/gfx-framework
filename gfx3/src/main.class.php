@@ -20,12 +20,14 @@ class EIncluder{
 	
 	public static $prev_path;
 	public static $abs_path;
-	public static $lib_path = "gfx3/src";
+	public static $source_path = "gfx3/src";
+	public static $cache_path = "gfx3/cache";
 	
 	//look for gfx3 installation path
 	public static function getLibInstallPath(){
 		if(is_dir("gfx3")){
-			return getcwd()."/".EIncluder::$lib_path;
+			EIncluder::$cache_path = getcwd()."/".EIncluder::$cache_path;
+			return getcwd()."/".EIncluder::$source_path;
 		} else {
 			chdir("..");
 			return EIncluder::getLibInstallPath();
@@ -62,10 +64,6 @@ class EMain {
 	private $time_end;
 	
 	//singletons
-	public $db;
-	public $user;
-	public $error;
-	public $dbg;
 	
 	/*
 	 * various settings to be chosen between database, user and template management.
@@ -80,6 +78,7 @@ class EMain {
 		$this->dbg = true;
 		$this->log = new ELog(0); //plain text, don't preserve as default
 		$this->db = new EDatabase(); //config in config.php TODO:fix
+		$this->data = new EHeaderDataParser();
 		
 	}
 	
