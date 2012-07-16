@@ -67,7 +67,7 @@ class EUser{
 		if(!$r or $this->main->db->status()!=0){
 			//catching an error, setting status
 			$this->status = 1;
-			$this->main->log->warning("EUser is not logged!");
+			ELog::warning("EUser is not logged!");
 		}
 	}
 	

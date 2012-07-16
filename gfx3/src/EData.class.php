@@ -38,7 +38,7 @@ class EData {
 		if($this->main->db->table_exists($this->table)){
 			$this->get_table_info();
 		} else {
-			$this->main->log->error("$tbl does not exists on database.");
+			ELog::error("$tbl does not exists on database.");
 		}
 		
 		$this->dbg = false;
@@ -146,7 +146,7 @@ class EData {
 					$sql = $sql."'".$entry['value']."',";
 				} else if($field['type']=="int") {
 					if(preg_match("/[^0-9]/", $entry['value'])){
-						$this->main->log->error("EData Object Error: wrong data passed for <i><big>`".$field['field']."`</big></i> with type `INT`! freezing...");
+						ELog::error("EData Object Error: wrong data passed for <i><big>`".$field['field']."`</big></i> with type `INT`! freezing...");
 					}
 					$sql = $sql.$entry['value'].",";
 				}

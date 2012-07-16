@@ -44,7 +44,7 @@ class OCSLister{
 			$this->table = $tbl;
 			$this->datatable = new EData($this->table);
 		} else {
-			$this->main->log->error("$tbl does not exists on database.");
+			ELog::error("$tbl does not exists on database.");
 		}
 	}
 	
