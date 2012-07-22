@@ -22,11 +22,13 @@ class EIncluder{
 	public static $abs_path;
 	public static $source_path = "gfx3/src";
 	public static $cache_path = "gfx3/cache";
+	public static $config_path = "gfx3/config";
 	
 	//look for gfx3 installation path
 	public static function getLibInstallPath(){
 		if(is_dir("gfx3")){
 			EIncluder::$cache_path = getcwd()."/".EIncluder::$cache_path;
+			EIncluder::$config_path = getcwd()."/".EIncluder::$config_path;
 			return getcwd()."/".EIncluder::$source_path;
 		} else {
 			chdir("..");
@@ -62,6 +64,7 @@ class EMain {
 	//time bench related var
 	private $time_start;
 	private $time_end;
+	public static $ref;
 	
 	//singletons
 	
@@ -74,11 +77,16 @@ class EMain {
 		$this->time_start = microtime(true);
 		
 		//standard global objects
-		$GLOBALS['main'] = $this;
+		EMain::$ref = $this;
+		
 		$this->dbg = true;
 		$this->db = new EDatabase(); //config in config.php TODO:fix
 		$this->data = new EHeaderDataParser();
 		
+	}
+	
+	public static function getRef(){
+		return EMain::$ref;
 	}
 	
 	/*

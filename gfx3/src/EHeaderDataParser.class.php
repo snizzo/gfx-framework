@@ -29,8 +29,7 @@ class EHeaderDataParser {
 	 * Store all the keys  of gets and posts in arrays.
 	 */
 	public function __construct(){
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 		$this->quotes = get_magic_quotes_gpc();
 		$this->gets = $_GET;
 		$this->posts = $_POST;

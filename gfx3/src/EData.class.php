@@ -31,8 +31,7 @@ class EData {
 	private $main;
 	
 	public function __construct($tbl){
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 		
 		$this->table = $tbl;
 		if($this->main->db->table_exists($this->table)){

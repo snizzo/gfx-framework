@@ -29,8 +29,7 @@ class OCSLister{
 			$this->set_table_search($this->table);
 		}
 		//setting main to global
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 	}
 	
 	/*

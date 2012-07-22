@@ -17,7 +17,7 @@ include_once("EData.class.php");
 class EDatabase {
 	
     //server config
-	private $db_name = "prova";
+	private $db_name = "test";
 	private $db_host = "localhost";
 	private $db_user = "root";
 	private $db_pass = "asd";
@@ -41,8 +41,7 @@ class EDatabase {
 	 */
 	
 	public function __construct(){
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 		//opening session
 		$db = mysql_connect($this->db_host, $this->db_user, $this->db_pass) or $this->status = 2;
 		$db_select = mysql_select_db($this->db_name, $db) or $this->status = 1;

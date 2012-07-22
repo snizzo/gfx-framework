@@ -26,8 +26,8 @@ class EUser{
 	private $status;
 	
 	public function __construct(){
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
+		
 		session_start();
 		if(isset($_SESSION['nick'])){
 			$this->logged = true;

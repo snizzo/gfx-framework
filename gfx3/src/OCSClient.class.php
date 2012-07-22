@@ -52,7 +52,7 @@ class OCSClient{
 		//if result is in json format, parse json
 		// else parse xml
 		if($this->is_json_encoded($raw_data)){
-			return json_decode($raw_data)
+			return json_decode($raw_data);
 		} else {
 			return EXmlParser::to_array($raw_data);
 		}

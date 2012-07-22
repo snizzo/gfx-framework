@@ -30,8 +30,7 @@ class ECacheList {
 	private $prefix = "ecachelist_";
 	
 	public function __construct($file=false){
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 	}
 	
 	public function exists($key){

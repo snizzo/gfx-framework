@@ -28,8 +28,7 @@ class OCSUser{
 	
 	public function __construct(){
 		//storing root object
-		global $main;
-		$this->main = $main;
+		$this->main = EMain::getRef();
 		$this->persons = new EData("ocs_person");
 	}
 	
