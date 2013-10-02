@@ -260,7 +260,7 @@ class EData {
 		if(!empty($where)){ $where = " WHERE ".$where." "; }
 		
 		//recupero le informazioni automaticamente
-		if(empty($allowed_fields)){
+		if(!empty($allowed_fields)){
 			foreach($this->fields as $field){
 				if($field['field']!="id"){
 					if(EHeaderDataParser::exists_post($field['field']) and in_array($field['field'],$allowed_fields)){
@@ -300,6 +300,8 @@ class EData {
 			} else {
 				echo $sql;
 			}
+		} else {
+			ELog::warning("EData->update called with empty entries");
 		}
 	}
 	

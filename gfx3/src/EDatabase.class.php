@@ -40,6 +40,13 @@ class EDatabase {
 	 */
 	
 	public static function load(){
+		
+		//loading vars from config file
+		EDatabase::$db_name = EConfig::$data["database"]["name"];
+		EDatabase::$db_host = EConfig::$data["database"]["host"];
+		EDatabase::$db_user = EConfig::$data["database"]["user"];
+		EDatabase::$db_pass = EConfig::$data["database"]["password"];
+		
 		//opening session
 		$db = mysql_connect(EDatabase::$db_host, EDatabase::$db_user, EDatabase::$db_pass) or EDatabase::$status = 2;
 		$db_select = mysql_select_db(EDatabase::$db_name, $db) or EDatabase::$status = 1;
@@ -47,12 +54,6 @@ class EDatabase {
 		if(EDatabase::$status==0){
 			EDatabase::$opened = true;
 		}
-		
-		EDatabase::$db_name = EConfig::$data["database"]["name"];
-		EDatabase::$db_host = EConfig::$data["database"]["host"];
-		EDatabase::$db_user = EConfig::$data["database"]["user"];
-		EDatabase::$db_pass = EConfig::$data["database"]["password"];
-		
 		
 	}
 	
@@ -125,13 +126,19 @@ class EDatabase {
 	}
 	
 	public static function table_exists($table){
-		$r = EDatabase::$q("SHOW TABLES LIKE '$table'");
-		$row = mysql_fetch_row($r);
-		if(empty($row)){
-			return false;
+		$r = EDatabase::q("SHOW TABLES LIKE '$table'");
+		if(EDatabase::$opened) {
+			$row = mysql_fetch_row($r);
+			if(empty($row)){
+				return false;
+			} else {
+				return true;
+			}
 		} else {
-			return true;
+			ELog::error("Database not opened!");
+			return false;
 		}
+		
 	}
 	
 	public static function num_rows($result){
@@ -147,7 +154,7 @@ class EDatabase {
 	}
 	
 	public static function last_insert_id(){
-		$r = EDatabase::$sq("SELECT LAST_INSERT_ID()");
+		$r = EDatabase::sq("SELECT LAST_INSERT_ID()");
 		return $r;
 	}
 	
@@ -162,7 +169,7 @@ class EDatabase {
 	public static function unload(){
 		if(EDatabase::$opened==true){
 			// TODO: strange behaviour under root. Inspect.
-			// mysql_close(EDatabase::$db_link);
+			// mysql_close(EDatabase::db_link);
 			EDatabase::$db_link = 0;
 			EDatabase::$opened = false;
 		} else {

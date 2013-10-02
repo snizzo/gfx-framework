@@ -28,7 +28,7 @@ class ELog {
 	public static $warning_file = "warning.log";
 	public static $preserve_errors = false;
 	public static $preserve_warnings = false;
-	public static $mode = 0;
+	public static $mode = 2;
 	
 	public static function error($r){
 		switch (ELog::$mode){
@@ -61,6 +61,12 @@ class ELog {
 				fwrite($stream, "GFX WARNING: $r\n\n");
 				fclose($stream);
 		}
+	}
+	
+	public static function pd($q){
+		echo "<pre>";
+		var_dump($q);
+		echo "</pre>";
 	}
 	
 	public static function clear_log(){

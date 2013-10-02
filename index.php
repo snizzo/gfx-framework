@@ -13,4 +13,5 @@ echo "Here you can find also the manual: <a href=\"http://code.google.com/p/gfx-
 EStructure::insert("content");
 
 EStructure::unload();
+
 ?>
