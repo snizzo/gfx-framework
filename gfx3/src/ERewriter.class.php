@@ -83,10 +83,12 @@ class ERewriter{
 	 
 	 /**
 	  * Used to make url pretty in order to SEO
-	  * TODO: improve
 	  */
 	 public static function prettify($string){
-		 return str_replace(" ", "-", $string);
+		 $string = preg_replace("/[^a-z_\-0-9]/i", "-", $string);
+		 $string = preg_replace("/[-]+/", "-", $string);
+		 $string = trim($string, "-");
+		 return $string;
 	 }
 }
 
