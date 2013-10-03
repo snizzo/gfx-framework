@@ -4,7 +4,7 @@
  *   TRT GFX 3.0.1 (beta build) BackToSlash
  * 
  *   support:	happy.snizzo@gmail.com
- *   website:	http://trt-gfx.googlecode.com
+ *   website:	http://gfx-framework.googlecode.com
  *   credits:	Claudio Desideri
  *   
  *   This software is released under the MIT License.
@@ -12,16 +12,17 @@
  */ 
 
 /*
- *
+ * This class is intended to be extended for using as generic controller.
  */
 
-class EStructure {
+class EController {
 	
-	public static function load()
-	{
+	private $name = false;
+	private $debug = true;
+	
+	public function __construct(){
 		
 	}
-	
 }
 
 ?>
