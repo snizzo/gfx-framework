@@ -17,9 +17,38 @@
 
 class EStructure {
 	
-	public static function load()
+	private static $debug = false;
+	
+	public static function render()
 	{
+		//getting correct input
+		$input = trim($_SERVER['REQUEST_URI'], "/");
+		$chunks = explode("/", $input);
 		
+		if(isset($chunks[0])){ $controller = $chunks[0];		unset($chunks[0]); }
+		if(isset($chunks[1])){ $method = $chunks[1];			unset($chunks[1]); }
+		
+		//building controller name
+		$controller = ucfirst($controller)."Controller";
+		
+		$args = $chunks;
+		
+		//checking if controller is available
+		if (class_exists($controller)){
+			$current_controller = new $controller();
+			
+			if(empty($method)){
+				$current_controller->index($chunks);
+			} else {
+				$current_controller->$method($chunks);
+			}
+		}
+		
+	}
+	
+	public static function view($url, $data)
+	{
+		include(ELoader::$views_path."/$url.views.php");
 	}
 	
 }

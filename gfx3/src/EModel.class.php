@@ -20,7 +20,7 @@
  * update()
  */
 
-class EData {
+class EModel {
 	//in order to avoid avoidable queries
 	private $dbg = false;
 	private $tcount = "nd";

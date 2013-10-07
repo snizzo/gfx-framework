@@ -12,7 +12,7 @@
 
 //db related include files
 include_once("EDatasetter.class.php");
-include_once("EData.class.php");
+include_once("EModel.class.php");
 
 class EDatabase {
 	

@@ -22,7 +22,8 @@ class ERewriter{
 	/*
 	 * Rewrite url if needed.
 	 */
-	public static function load(){
+	public static function load()
+	{
 		//if web page is set to be not rewritable, simply return
 		
 		if(isset(EConfig::$data['rewrite'][$_SERVER['REQUEST_URI']])){
@@ -31,7 +32,6 @@ class ERewriter{
 			return;
 		}
 	}
-
 
 	/**
 	* Used to make url pretty in order to SEO

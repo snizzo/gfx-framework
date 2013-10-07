@@ -17,9 +17,6 @@
 
 class EController {
 	
-	private $name = false;
-	private $debug = true;
-	
 	public function __construct(){
 		
 	}
