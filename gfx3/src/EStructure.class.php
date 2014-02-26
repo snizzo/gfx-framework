@@ -46,9 +46,15 @@ class EStructure {
 		
 	}
 	
-	public static function view($url, $data)
+	public static function view($url, $data="")
 	{
-		include(ELoader::$views_path."/$url.views.php");
+		$filepath = ELoader::$views_path."/$url.views.php";
+		
+		if(file_exists($filepath)){
+			include(ELoader::$views_path."/$url.views.php");
+		} else {
+			ELog::error("non-existent view included. Please define $filepath !");
+		}
 	}
 	
 }

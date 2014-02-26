@@ -7,18 +7,13 @@ class MainController extends EController
 {
 	public function index($args)
 	{
-		echo "Hello from main controller!";
+		EStructure::view("home");
 	}
 	
 	public function last_news()
 	{
 		$articles = new ArticlesModel();
 		EStructure::view("articles", $articles->getAll());
-	}
-	
-	public function cancel()
-	{
-		echo "cancelling";
 	}
 }
 
