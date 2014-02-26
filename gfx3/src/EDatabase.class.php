@@ -48,8 +48,8 @@ class EDatabase {
 		EDatabase::$db_pass = EConfig::$data["database"]["password"];
 		
 		//opening session
-		$db = mysql_connect(EDatabase::$db_host, EDatabase::$db_user, EDatabase::$db_pass) or EDatabase::$status = 2;
-		$db_select = mysql_select_db(EDatabase::$db_name, $db) or EDatabase::$status = 1;
+		$db = mysqli_connect(EDatabase::$db_host, EDatabase::$db_user, EDatabase::$db_pass) or EDatabase::$status = 2;
+		$db_select = mysqli_select_db($db, EDatabase::$db_name) or EDatabase::$status = 1;
 		EDatabase::$db_link = $db;
 		if(EDatabase::$status==0){
 			EDatabase::$opened = true;
@@ -76,11 +76,11 @@ class EDatabase {
 	public static function safe($s){
 		if(is_array($s)){
 			foreach($s as $key => $value){
-				$s[$key] = mysql_real_escape_string($s[$key]);
+				$s[$key] = mysqli_real_escape_string($s[$key]);
 			}
 			return $s;
 		} else {
-			$s = mysql_real_escape_string($s);
+			$s = mysqli_real_escape_string($s);
 			return $s;
 		}
 	}
@@ -93,8 +93,8 @@ class EDatabase {
 	public static function q($q){
 		if(EDatabase::$opened==true){
 			EDatabase::$queries += 1;
-			$ret = mysql_query($q, EDatabase::$db_link);
-			$error = mysql_error();
+			$ret = mysqli_query(EDatabase::$db_link, $q);
+			$error = mysqli_error(EDatabase::$db_link);
 			if(empty($error)){ 
 				$ret = $ret;
 			} else {
@@ -114,8 +114,8 @@ class EDatabase {
 	public static function sq($q){
 		if(EDatabase::$opened==true){
 			EDatabase::$queries += 1;
-			$ret = mysql_query($q, EDatabase::$db_link); //FIXME: error management
-			while($row=mysql_fetch_array($ret)){
+			$ret = mysqli_query(EDatabase::$db_link, $q); //FIXME: error management
+			while($row = $ret->fetch_array()){
 				$number = $row[0];
 			}
 			return $number;
@@ -128,7 +128,7 @@ class EDatabase {
 	public static function table_exists($table){
 		$r = EDatabase::q("SHOW TABLES LIKE '$table'");
 		if(EDatabase::$opened) {
-			$row = mysql_fetch_row($r);
+			$row = mysqli_fetch_row($r);
 			if(empty($row)){
 				return false;
 			} else {
@@ -142,11 +142,12 @@ class EDatabase {
 	}
 	
 	public static function num_rows($result){
-		return mysql_num_rows($result);
+		return mysqli_num_rows($result);
 	}
 	
 	public static function fetch_assoc($result){
-		return mysql_fetch_assoc($result);
+		die("<b>[BUG]</b> use my to implement database/fetch_assoc!");
+		//return mysql_fetch_assoc($result);
 	}
 	
 	public static function status(){
