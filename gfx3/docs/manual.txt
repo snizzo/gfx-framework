@@ -1,0 +1,537 @@
+------------------------------------------------------------------------------
+|                         1 . Introduction                                   |
+------------------------------------------------------------------------------
+
+This library is written for fun and quick development. So, also the user 
+manual tries to follow the main philosophy behind this framework.
+One of the most important tips you should never forget while coding with this
+lib is be lazy. You shouldn’t find yourself doing so much work for doing a small
+(or) repetitive job. Maybe you’re doing some mistakes somewhere. You should
+looking over standard classes and maybe consider deriving some of them.
+One other thing you should keep in mind is: this lib is built with many conven-
+tions in mind. If you keep them in mind, you should have no problems in fast
+coding. In the other case, you’ll better change framework.
+For now, that’s all folks! Let’s so exploring the standard website structure of a
+GFX installation.
+
+------------------------------------------------------------------------------
+|                      2 . Creating index.php                                |
+------------------------------------------------------------------------------
+
+Our index.php file must be placed at the root of our web site, it must just include
+gfx lib file so it will appear like this:
+
+	<?php
+	include("gfx3/lib.php");
+	?>
+
+If you place this file also in a sub directory of gfx3 eg.. there's /gfx3 and you
+put index.php into /src/index.php EModuleIncluder will search for the lib and include it
+automatically.
+
+------------------------------------------------------------------------------
+|                            3 . Templating                                  |
+------------------------------------------------------------------------------
+
+GFX4 uses a Model-View-Controller pattern that works with a rewrite engine.
+
+In the model-view-controller the code is splitted mainly in 3 semantic categories
+which are, of course:
+ - Model, represented by EModel class
+ - View, represented by simple html, css or js templating code
+ - Controller, represented by a subclass of the EController class
+
+Each one of these should contain a different type of code. Let's see them closer.
+
+------------------------------MODEL--------------------------------------
+
+The EModel class incorporates the old EData class now deprecated and contains
+various facilities for querying databases and performing standard tasks like SELECT,
+INSERT, UPDATE and DELETE. So, for example, if you're writing a class that interfaces
+with the "posts" class in your database, you should create a file name "posts.model.php"
+in the "model" directory. GFX already knows that there are models there.
+
+Every model should be name following this syntax <tablename>.model.php in order to be
+automatically loaded by gfx as a model. Then you can write your code that basically queries
+the database and returns the correct data, along with all manipulations done.
+
+Think of a Model of an object that has to return data that should already human understandable
+if seen raw.
+
+------------------------------VIEW---------------------------------------
+
+Then there's the View folder, which is at the root of the gfx application and is called "views".
+This one contains php files named under the following syntax:
+		<viewname>.views.php
+Each view has the php final extension but can contain both php and standard templating code like
+pure html, css, js. In fact, a view should contain exaclty the code needed to display data to the
+user in the desired way. This will be achieved by a particular interaction that we'll see later
+in this guide.
+
+You can also create a views hierarchy simply by creating a set of folders. The load process
+will be completely transparent for the engine, and it's done by simply putting the entire url starting
+from "views" in the load command. This will be seen in a pratical example later.
+
+------------------------------CONTROLLER---------------------------------
+
+Lastly, the more important of both the components, the Controller, represented by the EController
+class and located in the folder "controllers" following this filename syntax:
+		<controllername>.controller.php
+
+The controller is used to "glue" the data produced with the model and put it in the view in the correct
+order. In the controller will be written also all the logic of the application.
+
+Every controller class name should named after the "section" of the website that you want to handle.
+For example the MainController->index($args) above will be executed when www.mywebsite.com/main/index
+is called. 
+
+Here is a practical example of a working controller.
+
+----------------------------main.controller.php------------------------------
+
+<?php
+class MainController extends EController
+{
+	public function index($args)
+	{
+		EStructure::view("home");
+	}
+	
+	public function last_news()
+	{
+		$articles = new ArticlesModel();
+		EStructure::view("articles", $articles->getAll());
+	}
+}
+?>
+
+------------------------------articles.model.php-----------------------------
+<?php
+class ArticlesModel extends EModel
+{
+	public function __construct()
+	{
+		parent::__construct("articles");
+	}
+	
+	public function getAll()
+	{
+		$data = $this->find("*");
+		return $data;
+	}
+}
+?>
+-----------------------------articles.views.php------------------------------
+<html>
+	<head><title>Articles page</title></head>
+	<body>
+		<?php foreach($data as $article) { ?>
+		<h1><?php echo $article['id']; ?></h1>
+		<p><?php echo $article['text']; ?></p>
+		<?php } ?>
+	</body>
+</html>
+
+MVC can be managed in the generic config file ("gfx3/config/generic.conf.php"):
+Example:
+<?php die("You cannot see config in here."); ?>
+mvc|yes
+mvc|no
+
+------------------------------------------------------------------------------
+|                         4 . URL Rewriting                                  |
+------------------------------------------------------------------------------
+Gfx contains a simple but working url rewriter that works in conjunction with
+the MVC system. It basically translates an URL asked by the client into a new one
+elaborated by the server.
+
+All the rules are in the file "gfx3/config/rewrite.conf.php". This is an example rewrite config file:
+
+<?php die(); ?>
+/help|/help/index
+/yourpath|/install/index
+
+Notice how the first URL is the one written by the client and the second one is that one elaborated
+by the server, when handling the request of a webpage.
+
+Everything that comes after a controller is usually handled as a parameter, except when you rewrite the URL.
+So, for example, calling /help/index/arg1/arg2/arg3 will be directly passed as an argument array to the method
+index($args) of the controller HelpController. Every other standard GET parameter can be passed as usual:
+http://www.example.com/help/index?x=5
+http://www.example.com/help/index/?x=5
+http://www.example.com/help/index/arg1/arg2?x=5
+http://www.example.com/help/index/arg1/arg2/?x=5
+
+In those URLs, the get parameters will be held in the EHeaderDataParser class, that offers also protection against
+SQL injections.
+
+URL rewriting can be managed in the generic config file ("gfx3/config/generic.conf.php"):
+Example:
+<?php die("You cannot see config in here."); ?>
+rewrite|yes
+rewrite|no
+
+------------------------------------------------------------------------------
+|                         5 . User management                                |
+------------------------------------------------------------------------------
+
+In GFX3 there's a static class called EUser. In order to have users working on your system just call
+
+	EUser::load();
+
+Your database must be working and a db table called "users" must be set up with (at least) the following structure:
+ 
++-----------+------------------+------+-----+---------+----------------+
+| Field     | Type             | Null | Key | Default | Extra          |
++-----------+------------------+------+-----+---------+----------------+
+| id        | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| login     | varchar(45)      | NO   |     | NULL    |                |
+| password  | varchar(45)      | NO   |     | NULL    |                |
+| firstname | varchar(45)      | NO   |     | NULL    |                |
+| lastname  | varchar(45)      | NO   |     | NULL    |                |
+| email     | varchar(100)     | NO   |     | NULL    |                |
+| tgoup     | text             | NO   |     | NULL    |                |
++-----------+------------------+------+-----+---------+----------------+
+
+And it will automatically do all the job. This is also OCS complaint, as for OCS v1.6.
+
+Small reference:
+
+	EUser::login($login,$password) -> execute login if possible
+	EUser::logged() -> returns true or false depending if logged or not
+	EUser::logout() -> execute logout
+	EUser::refresh() -> refresh current info in case you're dynamically modifying user data
+	EUser::gdeny($group) -> deny the access to the webpage if user does belong to $group, allow others
+	EUser::gallow($group) -> allow the access to the webpage if user does belong to $group, deny others
+	EUser::belongs_to_group($group) -> returns boolen. True if user belongs to $group.
+	
+Users can be managed in the generic config file ("gfx3/config/generic.conf.php"):
+Example:
+<?php die("You cannot see config in here."); ?>
+users|yes
+users|no
+
+------------------------------------------------------------------------------
+|                    6 . Low-level MySQL database                            |
+------------------------------------------------------------------------------
+
+In GFX3 there's the static class EDatabase which provide a direct communication
+channel with your database.
+It is automatically initialized and you simply have to call it.
+
+Small reference:
+
+	EDatabase::q($sql_query) -> execute $sql_query
+	EDatabase::sq($sql_query) -> execute $sql_query and returns the first result. Useful for counts etc. 
+	EDatabase::table_exists($table) -> check if table exists and return boolean.
+	EDatabase::last_insert_id() -> returns the id of the last inserted row.
+
+Database (both high and low level) can be managed in the generic config file ("gfx3/config/generic.conf.php"):
+Example:
+<?php die("You cannot see config in here."); ?>
+database|yes
+database|no
+
+------------------------------------------------------------------------------
+|                      7 . High-level MySQL database                         |
+------------------------------------------------------------------------------
+
+In GFX3 there's an abstraction layer up on mysql tables called EData.
+First, you prepare your EData object by creating an object like this:
+
+	$dbtable = new EData("dbtable"); // "test" is the exact name of the table
+
+And then you can use all of EData methods. Small API:
+
+	$dbtable->insert(array $allowed_fields) -> insert a new row 
+	$dbtable->find($what, $where) -> returns the result of the query into an associative array example: $dbtable->find("*","id = 6");
+	$dbtable->count($field, $where) -> returns an integer returned from a count query. example: $dbtable->count("id","id = 6");
+	$dbtable->is_there($field,$where) -> check if $field is present $where.
+	$dbtable->update($where, array $allowed_fields) -> update same as insert
+	$dbtable->delete($where, $howmany) -> delete same as insert
+
+For some special methods like find, insert, update and delete EData will take
+$_POST data with the same name as the field name on the database table.
+Please be careful when using those intelligent features as they are easily
+exploitable. In order to avoid those kind of bugs always use $allowed_fields.
+
+------------------------------------------------------------------------------
+|                          8 . Error Management                              |
+------------------------------------------------------------------------------
+
+GFX3 provides a nice class to handle error management.
+
+	ELog::error("this will be shown");
+
+This string will produce a backtrace and break the execution of the script exactly where this is introduced.
+This is the main difference between an error and a warning.
+
+	ELog::warning("this will be shown");
+
+Error management can be suppressed and managed in the file "gfx3/config/generic.conf.php".
+
+<?php die("You cannot see config in here."); ?>
+
+errormode|normal			-> Errors are shown as normal
+errormode|formatted			-> Errors are shown with little html formatting
+errormode|file				-> Errors are written in a log file accessible only from internal server
+errormode|suppressed		-> Errors are simply suppressed (suggested option in production environment)
+
+------------------------------------------------------------------------------
+|                          9 . Debugging tools                               |
+------------------------------------------------------------------------------
+
+The only debugging tool provided is a breakpoint.
+You can use it like this:
+
+	eval(DEBUG_BREAKPOINT);
+	
+This will also print the variable stack in which the breakpoint is called.
+
+------------------------------------------------------------------------------
+|                     10 . Retrieving safe GET/POST data                      |
+------------------------------------------------------------------------------
+
+GFX provides a class that automatically handles and parse GET and POST data.
+So instead of directly accessing those arrays you should use EHeaderDataParser.
+
+If you have to output your data you can use:
+	
+	EHeaderDataParser::out_get(string $name);
+	EHeaderDataParser::out_post(string $name);
+
+If you have to insert your data into database and you need them to be safe you can use:
+	
+	EHeaderDataParser::db_get(string $name);
+	EHeaderDataParser::db_post(string $name);
+
+If you need all your data to be safe you can easily do:
+	
+	EHeaderDataParser::safeAll();
+
+You can also set GET and POST manually using:
+
+	EHeaderDataParser::add_get(string $key, string $value);
+	EHeaderDataParser::add_post(string $key, string $value);
+	
+You can use this class to get/set cookie data via:
+	EHeaderDataParser::get_cookie(string $key);
+	EHeaderDataParser::set_cookie(string $key, $value);
+
+This can result particularly useful when you need to use EModel's insert and update
+but not all the data comes from user request.
+
+If you want to take those variables fast and you can't decide you can choose
+the unsafe way using:
+	
+	EHeaderDataParser::get(string $key);
+	EHeaderDataParser::post(string $key);
+
+If you have a string formed as a standard get key/value list (e.g. example=val&example2=val2)
+you can use this handy method to have that added to the module's stack.
+	
+	EHeaderDataParser::add_from_string(string $str);
+
+EHeaderDataParser can be configure in the generic config file of gfx, which can be located
+here: "gfx3/config/generic.conf.php".
+
+Example:
+<?php die("You cannot see config in here."); ?>
+protectheaders|yes
+protectheaders|no
+	
+------------------------------------------------------------------------------
+|                             11 . URL Rewriting                             |
+------------------------------------------------------------------------------
+
+GFX has a module that do URL rewriting without any .htaccess stuff.
+You have to set your page to be rewritable under /config/rewrite.conf.php
+
+like this:
+	
+	<?php die(); ?>
+	/|/main/index|exact
+	/help|/help/index|normal
+	/games|/games/lates|normal
+
+And then it will rewrite doing a simple string replace, but internally on the engine.
+So in this case /help will be rewritten internally as /help/index and therefore
+calling the index() method of the HelpController class defined.
+
+If more rules are matching for the same url, the one with the longest key will be
+used. Example:
+
+	<?php die(); ?>
+	/help/games|/help/games/latest|normal
+	/help|/help/index|normal
+
+Only the second rule will be considered, even if it's defined before the second one.
+
+Every other parameter added after those slashes will be handled as parameter that will
+be passed to the controller's method via the $args array.
+
+Example of HelpController:
+	class HelpController extends EController {
+		public function index($args){
+			var_dump($args);
+		}
+	}
+
+Example of user browser opening the page www.example.com/help/index/arg1/arg2:
+	{
+		"arg1",
+		"arg2"
+	}
+
+Every other parameter passed as standard GET like ?var1=val1&var2=val2 is correctly
+set on EHeaderDataParser.
+
+This kind of parameter management works also for rewritten URLs. For example it would
+exactly be the same if the user calls: www.example.com/help/arg1/arg2
+without the "/index" part.
+
+This is the "normal" rewrite.
+
+The "exact" mode rewrites a URL only if it matches exactly so additional parameters via /
+aren't handled and accepted. Normal GET parameters are handled as usual. 
+
+In order to build a nice title (also if it's not useful for your app logic you should use:
+	
+	$url = ERewriter::prettify("I'm a terrible title");
+
+Rewriting can be enabled/disabled via general.conf.php:
+	<?php die("You cannot see config in here."); ?>
+	rewrite|yes
+	rewrite|no
+------------------------------------------------------------------------------
+|                            12 . Config manager                             |
+------------------------------------------------------------------------------
+
+GFX use a class to load config every time from a bunch of files. You can also
+create your config and find them placed under EConfig.
+
+If you edit your /config/database.conf.php like this:
+	<?php die(); ?>
+	name|test
+	host|localhost
+	user|root
+	password|asd
+
+You will automatically find them placed calling
+	EConfig::$data["database"]["name"];
+
+Note that "database" is the filename without extensions and name is the variable name.
+Don't be afraid to use this feature as config files are cached using the cache engine.
+
+Also note that PHP code in config files will just be ignored, so it's quite safe to put
+some kind of die(); on the first line so no one will be able to see your inner config.
+
+You can also use multi value properties like this:
+--------------/config/myname.conf.php-------------
+	<?php die(); ?>
+	info|Claudio|Desideri|kde
+
+If you access EConfig::$data["myname"]["info"]; you get an array containing all the values.
+You can iterate on it using:
+	foreach(EConfig::$data["myname"]["info"] as $item){
+		echo $item;
+	}
+
+This will print:
+	Claudio
+	Desideri
+	kde
+
+And via code that will be accessible using:
+    $info = EConfig::$data["myname"]["info"];
+    $info[0];
+    $info[1];
+    $info[2];
+
+------------------------------------------------------------------------------
+|                           13 . Cache Engine                                |
+------------------------------------------------------------------------------
+
+GFX make large use of APC module in order to be more efficient and caching everything 
+is cacheable.
+
+You can create your list of vars (like in EConfig) using ECacheVar. Small reference:
+	$cvar = new ECacheVar("name of the container");
+	$cvar->get($var) -> get previously setted variable
+	$cvar->set($var, $value) -> set new variable
+	$cvar->del($var) -> delete a variable
+	$cvar->get_array_assoc(); -> returns an associative array of the whole container (iterable)
+
+You can create your full page of cache using ECacheList. Small reference:
+	$cvar = new ECacheList("name of the container");
+	$cvar->get() -> get previously setted value
+	$cvar->set($value) -> set container value
+	$cvar->del() -> delete the container
+
+It's also present an abstraction to put entire files into cache so you won't be loading too many times
+that txt file. Small referece:
+	$cvar = new ECacheFile($filepath); -> load file from cache. If not present put into cache and load.
+	$cvar->get(); -> get file value
+
+------------------------------------------------------------------------------
+|                       14 . File System utilities                           |
+------------------------------------------------------------------------------
+
+GFX offers a static class as a file system helper. Small reference:
+	EFileSystem::get_file_extension(string $filename) -> returns string extension
+	EFileSystem::get_file_name(string $filename) -> returns string name
+	EFileSystem::rename_file(string $from, string $to) -> rename file
+	EFileSystem::move_uploaded_file_in($path,$newname) -> move uploaded file to $path and change name to $newname
+	EFileSystem::get_uploaded_file_name() -> returns original uploaded file name.
+	
+------------------------------------------------------------------------------
+|                       15 . Network Socket object                           |
+------------------------------------------------------------------------------
+
+GFX permits also to interact with other APIs and websites through ENetworkSocket.
+ENetworkSocket is an object that makes http requests with get and post data to the specified address.
+	
+	$s = new ENetworkSocket("http://localhost");
+	$c = $s->get("index.php");
+	
+This will set content of $c to the content of http://localhost/index.php performing a get request.
+	
+	$postdata = array(
+						"name"    => "john",
+						"surname" => "smith"
+						)
+	
+	$s = new ENetworkSocket("http://localhost");
+	$c = $s->post("index.php", $postdata);
+	
+This will set content of $c to the content of http://localhost/index.php performing a post request and
+sending $postdata as $_POST value.
+
+------------------------------------------------------------------------------
+|                          16 . XML utilities                                |
+------------------------------------------------------------------------------
+
+In order to simply read xml GFX3 offers a small class still WIP to handle XML. Small reference:
+	
+	EXmlParser::to_array($raw_xml); -> turns raw xml into a structured array.
+
+------------------------------------------------------------------------------
+|                            17 . More tools                                 |
+------------------------------------------------------------------------------
+
+If your installation is on / you will have also some utils and debugging tools like
+the realtime GFX console in which you can type and execute your code very fast just
+to try it, inspect and code faster. You'll find this tool under /utils/index.php
+
+If you want to know more about the usage that APC has in your system you can also 
+go to /utils/apc.php
+
+------------------------------------------------------------------------------
+|                               18 . Contacts                                |
+------------------------------------------------------------------------------
+
+This manual has been written by snizzo during an afternoon.
+If there are any error please mail me or open a ticket here on github:
+
+	https://github.com/snizzo/gfx-framework
+	happy.snizzo@gmail.com
