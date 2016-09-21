@@ -44,6 +44,8 @@ class ERewriter{
 	 */
 	public static function load()
 	{	
+        //getting website root for rewriting
+        $rewrite_root = EConfig::$data['generic']['rewrite_root'];
 		//treat url erasing extra parts
 		$current_uri = $_SERVER['REQUEST_URI'];
 		//keeping a local copy
@@ -51,6 +53,11 @@ class ERewriter{
 		
 		$matches = array();
 		
+        //erasing base url
+        if(substr($current_uri, 0, strlen($rewrite_root)) === $rewrite_root){
+            $current_uri = str_replace($rewrite_root, "", $current_uri);
+        }
+        
 		foreach(EConfig::$data['rewrite'] as $key => $value){
 			if(!is_array($value)){
 				ELog::warning("You need to specify a second value as a rewrite rule in rewrite.conf.php");
