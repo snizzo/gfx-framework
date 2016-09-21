@@ -1,2 +1,2 @@
 <?php die(); ?>
-/|/welcome/index|exact
+/|/welcome/|normal

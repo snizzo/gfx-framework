@@ -52,10 +52,11 @@ class ERewriter{
         ERewriter::$oldurl = $current_uri;
 		
 		$matches = array();
-		
+        
         //erasing base url
         if(substr($current_uri, 0, strlen($rewrite_root)) === $rewrite_root){
             $current_uri = str_replace($rewrite_root, "", $current_uri);
+            $_SERVER['REQUEST_URI'] = $current_uri; //override request uri if needed
         }
         
 		foreach(EConfig::$data['rewrite'] as $key => $value){
@@ -94,7 +95,7 @@ class ERewriter{
 				}
 			}
 		}
-		
+        
 		if(ERewriter::$rewritable){
 			ksort($matches);
 			$matches = array_reverse(array_values($matches));

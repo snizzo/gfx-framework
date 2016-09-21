@@ -17,11 +17,11 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Biophysics Laboratory - UniUD</a>
+            <a class="navbar-brand" href="#">Your web application</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="index.php">Home</a></li>
+                <li><a href="index">Home</a></li>
 
                     <!--first dropdown menu (Tools)-->
                     <li class="dropdown">
@@ -44,7 +44,7 @@
                           <li><a href="#">Contacts</a></li>
                           <li role="separator" class="divider"></li>
                           <li class="dropdown-header">The company</li>
-                          <li><a href="#">About us</a></li>
+                          <li><a href="about">About us</a></li>
                         </ul>
                     </li>
 			</ul>
