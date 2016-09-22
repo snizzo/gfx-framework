@@ -1,6 +1,6 @@
 {
   "name": "Gfx-framework",
   "tagline": "Small and easily hackable web framework",
-  "body": "### Welcome to gfx-framework.\r\nHere you'll find all resources about Gfx-framework: a small and easily hackable web application engine.\r\n",
+  "body": "### No must-use paradigms\r\nGfx requests no paradigm to be used. Feel free to use MVC or singleton or just include a class or a portion of the framework, it will still work.\r\n\r\n###From little to big, from big to little\r\nScales from very little projects and utilities to big applications requiring speicific features (rewriting, database abstraction)\r\n\r\n###There's little to no under the hood\r\nGfx can be considered a useful extension to the php standard library. Every line of code you write, will exactly do what you're thinking it will do. There are no obscure mechanics you are tide of.\r\n\r\n###Easily hackable\r\nGfx is probably the easiest framework around to be hacked and adapted in very different scenarios.\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
