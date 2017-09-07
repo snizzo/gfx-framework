@@ -80,6 +80,9 @@ class ELog {
 	//TODO: implement print of arrays indepenent from var_dump
 	
 	public static function pd($q){
+		
+		array_walk_recursive($q, function(&$v) { $v = htmlspecialchars($v); });
+		
 		echo "<pre>";
 		var_dump($q);
 		echo "</pre>";

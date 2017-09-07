@@ -56,7 +56,7 @@ class ENetworkSocket{
 	/*
 	 * performs a post request and return raw xml
 	 */
-	public function post ($string){
+	public function post($string){
 		if($this->uploaded_file){
 			
 			
