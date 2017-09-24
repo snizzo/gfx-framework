@@ -56,7 +56,7 @@ class ENetworkSocket{
 	/*
 	 * performs a post request and return raw xml
 	 */
-	public function post ($string){
+	public function post($string){
 		if($this->uploaded_file){
 			
 			
@@ -77,10 +77,15 @@ class ENetworkSocket{
 			return $result;
 			
 		} else {
+			$requestHeaders = array(
+				'Content-type: application/x-www-form-urlencoded',
+				sprintf('Content-Length: %d', strlen($this->postdata))
+			);
+			
 			$opts = array('http' =>
 				array(
 					'method'  => 'POST',
-					'header'  => 'Content-type: application/x-www-form-urlencoded',
+					'header'  => implode("\r\n", $requestHeaders),
 					'content' => $this->postdata
 				)
 			);
