@@ -114,7 +114,8 @@ class EUser{
             
             EUtility::hide_output();
 			$r = unserialize(file_get_contents('http://www.geoplugin.net/php.gp?ip='.EUser::$ip));
-			if(!empty(EUtility::show_output())){
+            $page_output = EUtility::show_output();
+			if(!empty($page_output)){
                 //if request fails, assume we're under some kind of proxy and retry
                 if($r['geoplugin_status']==404){
                     EUser::$ip = file_get_contents("http://ipecho.net/plain");
